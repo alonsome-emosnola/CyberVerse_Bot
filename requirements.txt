@@ -1,0 +1,4 @@
+nest-asyncio
+aiogram
+dotenv
+bscscan-python
