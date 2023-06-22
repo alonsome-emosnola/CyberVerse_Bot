@@ -25,7 +25,7 @@ coin_details = {
     "twitter": "https://twitter.com/Cyberverse_bsc?t=cdn8dCRLysSceAWirpSO-w&s=09",
     "telegram": "https://t.me/cyberverse_coin",
     "referral_link": db.read_from_db({"referral_link": f"https://t.me/cyberversebot?start={HOLDER}"}),
-    "airdrop_amt": 1000,
+    "airdrop_amt": 1000000,
     "referral_count": 0,
     "wallet_address": db.read_from_db({"wallet": "[user wallet address]"}),
     "bal": func["normalize"](asyncio.run(func["bal"](os.environ["ADDRESS"]))),
