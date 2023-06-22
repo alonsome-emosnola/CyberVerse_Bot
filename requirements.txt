@@ -1,4 +1,5 @@
 nest-asyncio
 aiogram
-dotenv
+python-dotenv
 bscscan-python
+random-text-generator

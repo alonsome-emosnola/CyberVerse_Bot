@@ -1,4 +1,5 @@
 import os
+import db
 import nest_asyncio
 import asyncio
 from cyberverse_token import func
@@ -12,6 +13,7 @@ load_dotenv()
 nest_asyncio.apply()
 
 HOLDER = generate()
+db.post_to_db({"referral_link": f"https://t.me/cyberversebot?start={HOLDER}"})
 
 coin_details = {
     "name": "CyberVerse",
@@ -20,13 +22,13 @@ coin_details = {
     "decimal": 18,
     "contract_address": os.environ["CONTRACT_ADDRESS"],
     "token_supply_amount": func["total_supply"],
-    "twitter": "https://twitter.com/CyberverseToken?t=fHe2QXOzPJdNZNFu7Xh7nQ&s=09",
+    "twitter": "https://twitter.com/Cyberverse_bsc?t=cdn8dCRLysSceAWirpSO-w&s=09",
     "telegram": "https://t.me/cyberverse_coin",
-    "referral_link": f"https://t.me/cyberversebot?start={HOLDER}",
+    "referral_link": db.read_from_db({"referral_link": f"https://t.me/cyberversebot?start={HOLDER}"}),
     "airdrop_amt": 1000,
     "referral_count": 0,
-    "wallet_address": "",
-    "bal": func["normalize"](asyncio.run(func["bal"](os.environ["ADDRESS_2"]))),
+    "wallet_address": db.read_from_db({"wallet": "[user wallet address]"}),
+    "bal": func["normalize"](asyncio.run(func["bal"](os.environ["ADDRESS"]))),
     "total_supply": func["normalize"](asyncio.run(func["total_supply"]())),
     "total_circulating": func["normalize"](asyncio.run(func["total_circulating"]()))
 }
@@ -79,12 +81,37 @@ successful_reg = f"""
 
 Now You Can Start Inviting Your Friends To Earn 100 {coin_details["symbol"]} Tokens For Each Referral
 
-Wallet Address - ' '
+Wallet Address - {coin_details['wallet_address']}
 
 Referral Link - {coin_details["referral_link"]}
 
 Referral Count - {coin_details["referral_count"]}
 
-Balance - 1000
+Balance - {coin_details['airdrop_amt']} {coin_details['symbol']}
 🔶 Claim 1000 {coin_details["symbol"]} Bonus
+"""
+
+balance = f"""
+Balance - {coin_details['airdrop_amt']} {coin_details['symbol']}
+
+Referral Link - {coin_details["referral_link"]}
+
+Referral Count - {coin_details["referral_count"]}
+"""
+
+def withdraw(amount_of_referrals):
+    if amount_of_referrals < coin_details["referral_count"]:
+        return f"""
+        You need [amount of referrals needed to withdraw] to complete your withdrawal, please make sure to complete your referral count to [total amount of referrals needed to withdraw] inorder to participate on the max withdrawal on [date of airdrop payout]
+        """
+    else:
+        return f"""You have successfully reached your referral quota and payment will be disbursed soon to your provided wallet address, please make sure the wallet address you submitted earlier is correct. Thank you.
+        """
+
+invite_and_earn = f"""
+Your referral details are below:
+
+Referral Link - {coin_details["referral_link"]}
+
+Referral Count - {coin_details["referral_count"]}
 """

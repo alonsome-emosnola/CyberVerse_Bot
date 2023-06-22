@@ -3,6 +3,7 @@ import re
 import nest_asyncio
 import asyncio
 import content
+import db
 from cyberverse_token import func
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, ContentType  # for reply keyboard (sends message)
@@ -77,21 +78,38 @@ async def fourth_reply(message: types.Message):
 claim = KeyboardButton('🔶 Claim 1000 CBV Bonus')
 iandn = KeyboardButton('🎁 Invite & Earn')
 balance = KeyboardButton('💰 Balance')
-withdraw = KeyboardButton('✅  Withdraw')
+withdraw = KeyboardButton('✅ Withdraw')
 back_opt2 = KeyboardButton('🔝 Back')
 main_menu_opt2 = KeyboardButton('🔝 Main Menu')
 menu3 = ReplyKeyboardMarkup(row_width=7, resize_keyboard=True, one_time_keyboard=True).add(claim).add(iandn).add(balance).add(withdraw).add(back_opt2).add(main_menu_opt2)
 
 @dp.message_handler(content_types=ContentType.TEXT)
 async def hurray(message: types.Message):
+    db.post_to_db({"wallet": message.text})
     reply = content.hurray
     await message.answer(reply, reply_markup=menu3, disable_web_page_preview=True, parse_mode="HTML")
     asyncio.run(successful_reg(message))
 
 @dp.message_handler(content_types=ContentType.TEXT)
 async def successful_reg(message: types.Message):
-    reply = content.successful_reg
-    await message.answer(reply, reply_markup = menu3)
+    if message.text == '🔶 Claim 1000 CBV Bonus':
+        reply = content.successful_reg
+        await message.answer(reply, reply_markup = menu3)
+    elif message.text == '💰 Balance':
+        reply = content.balance
+        await message.answer(reply, reply_markup = menu3)
+    elif message.text == '✅ Withdraw':
+        reply = content.withdraw(content.coin_details["referral_count"])
+        await message.answer(reply, reply_markup = menu3)
+    elif message.text == '🎁 Invite & Earn':
+        reply = content.invite_and_earn
+        await message.answer(reply, reply_markup = menu3)
+    elif message.text == '🔝 Back':
+        reply = content.hurray
+        await message.answer(reply, reply_markup = menu3)
+    elif message.text == '🔝 Main Menu':
+        reply = content.successful_reg
+        await message.answer(reply, reply_markup = menu3)
 
 # this is the last line
 executor.start_polling(dp)
