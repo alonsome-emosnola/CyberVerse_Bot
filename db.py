@@ -12,20 +12,34 @@ uri = f"mongodb+srv://cyberversecbv:{pwd}@cyberverse.8labz2y.mongodb.net/"
 client = MongoClient(uri, server_api=ServerApi('1'))
 
 # Send a ping to confirm a successful connection
-async def post_to_db(**kwargs):
+def post_wallet(query):
     try:
         db = client.CyberVerse
-        post = await db.wallets.insert_one(kwargs).acknowledged
-    except Exception as e:
-        raise e("Error during insertion, please check", e)
-    else:
-        return post
+        db.wallets.insert_one(query)
+    except:
+        raise Exception("Error during insertion, please check")
 
-async def read_from_db(**kwargs):
+def read_wallet(query1, query2):
     try:
         db = client.CyberVerse
-        read = db.wallets.find_one(kwargs).acknowledged
-    except Exception as e:
-        raise e("Error reading value from database, please review", e)
+        wallet = db.wallets.find_one(query1, query2)
+    except:
+        raise Exception("Error reading value from database, please review")
     else:
-        return read
+        return wallet["wallet"]
+
+def post_link(query):
+    try:
+        db = client.CyberVerse
+        db.links.insert_one(query)
+    except:
+        raise Exception("Error during insertion, please check")
+
+def read_link(query1, query2):
+    try:
+        db = client.CyberVerse
+        link = db.links.find_one(query1, query2)
+    except:
+        raise Exception("Error reading value from database, please review")
+    else:
+        return link["referral_link"]

@@ -75,7 +75,7 @@ async def fourth_reply(message: types.Message):
     else:
         asyncio.run(hurray(message))
 
-claim = KeyboardButton('🔶 Claim 1000 CBV Bonus')
+claim = KeyboardButton(f"🔶 Claim {content.coin_details['airdrop_amt']} CBV Bonus")
 iandn = KeyboardButton('🎁 Invite & Earn')
 balance = KeyboardButton('💰 Balance')
 withdraw = KeyboardButton('✅ Withdraw')
@@ -85,30 +85,44 @@ menu3 = ReplyKeyboardMarkup(row_width=7, resize_keyboard=True, one_time_keyboard
 
 @dp.message_handler(content_types=ContentType.TEXT)
 async def hurray(message: types.Message):
-    db.post_to_db({"wallet": message.text})
+    db.post_wallet({
+        "name": f"{message.from_user.first_name} {message.from_user.last_name}",
+        "username": message.from_user.username,
+        "wallet": message.text
+    })
     reply = content.hurray
     await message.answer(reply, reply_markup=menu3, disable_web_page_preview=True, parse_mode="HTML")
-    asyncio.run(successful_reg(message))
+    asyncio.run(content_successful_reg(message))
 
 @dp.message_handler(content_types=ContentType.TEXT)
-async def successful_reg(message: types.Message):
-    if message.text == '🔶 Claim 1000 CBV Bonus':
-        reply = content.successful_reg
+async def content_successful_reg(message: types.Message):
+    if message.text == f"🔶 Claim {content.coin_details['airdrop_amt']} CBV Bonus":
+        db.post_link({
+        "name": f"{message.from_user.first_name} {message.from_user.last_name}",
+        "username": message.from_user.username,
+        "referral_link": content.r_link
+        })
+
+        wallet = db.read_wallet({"username": message.from_user.username}, {"_id": 0, "wallet": 1})
+
+        link = db.read_link({"username": message.from_user.username}, {"_id": 0, "referral_link": 1})
+
+        reply = content.successful_reg(wallet, link)
         await message.answer(reply, reply_markup = menu3)
     elif message.text == '💰 Balance':
-        reply = content.balance
+        reply = content.balance(link)
         await message.answer(reply, reply_markup = menu3)
     elif message.text == '✅ Withdraw':
         reply = content.withdraw(content.coin_details["referral_count"])
         await message.answer(reply, reply_markup = menu3)
     elif message.text == '🎁 Invite & Earn':
-        reply = content.invite_and_earn
+        reply = content.invite_and_earn(link)
         await message.answer(reply, reply_markup = menu3)
     elif message.text == '🔝 Back':
         reply = content.hurray
         await message.answer(reply, reply_markup = menu3)
     elif message.text == '🔝 Main Menu':
-        reply = content.successful_reg
+        reply = content.successful_reg(wallet, link)
         await message.answer(reply, reply_markup = menu3)
 
 # this is the last line

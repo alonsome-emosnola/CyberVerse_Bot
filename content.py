@@ -2,6 +2,7 @@ import os
 import db
 import nest_asyncio
 import asyncio
+from datetime import datetime
 from cyberverse_token import func
 from dotenv import load_dotenv
 from aiogram.utils.deep_linking import get_start_link, get_startgroup_link
@@ -13,7 +14,7 @@ load_dotenv()
 nest_asyncio.apply()
 
 HOLDER = generate()
-db.post_to_db({"referral_link": f"https://t.me/cyberversebot?start={HOLDER}"})
+r_link = f"https://t.me/cyberversebot?start={HOLDER}"
 
 coin_details = {
     "name": "CyberVerse",
@@ -24,10 +25,12 @@ coin_details = {
     "token_supply_amount": func["total_supply"],
     "twitter": "https://twitter.com/Cyberverse_bsc?t=cdn8dCRLysSceAWirpSO-w&s=09",
     "telegram": "https://t.me/cyberverse_coin",
-    "referral_link": db.read_from_db({"referral_link": f"https://t.me/cyberversebot?start={HOLDER}"}),
+    # "referral_link": db.read_link({"username": message.from_user.username}, {"_id": 0, "referral_link": 1}),
     "airdrop_amt": 1000000,
+    "airdrop_date": "31st July, 2023 | 11:59:00",
     "referral_count": 0,
-    "wallet_address": db.read_from_db({"wallet": "[user wallet address]"}),
+    "max_referral": 5,
+    # "wallet_address": db.read_wallet({"username": message.from_user.username}, {"_id": 0, "wallet": 1}),
     "bal": func["normalize"](asyncio.run(func["bal"](os.environ["ADDRESS"]))),
     "total_supply": func["normalize"](asyncio.run(func["total_supply"]())),
     "total_circulating": func["normalize"](asyncio.run(func["total_circulating"]()))
@@ -73,45 +76,49 @@ hurray = f"""
 
 Hurray! You Have Completed All The Tasks Successfully
 
-Now Click On "🔶 Claim 1000 {coin_details["symbol"]}" Button
+Now Click On "🔶 Claim {coin_details['airdrop_amt']} {coin_details["symbol"]}" Button
 """
 
-successful_reg = f"""
-❇️ You Have Successfully Claimed Your 1000 {coin_details["symbol"]} Bonus Tokens 
+def successful_reg(wallet, link):
+    f"""
+    ❇️ You Have Successfully Claimed Your {coin_details['airdrop_amt']} {coin_details["symbol"]} Bonus Tokens 
 
-Now You Can Start Inviting Your Friends To Earn 100 {coin_details["symbol"]} Tokens For Each Referral
+    Now You Can Start Inviting Your Friends To Earn 100 {coin_details["symbol"]} Tokens For Each Referral
 
-Wallet Address - {coin_details['wallet_address']}
+    Wallet Address - {wallet}
 
-Referral Link - {coin_details["referral_link"]}
+    Referral Link - {link}
 
-Referral Count - {coin_details["referral_count"]}
+    Referral Count - {coin_details["referral_count"]}
 
-Balance - {coin_details['airdrop_amt']} {coin_details['symbol']}
-🔶 Claim 1000 {coin_details["symbol"]} Bonus
-"""
+    Balance - {coin_details['airdrop_amt']} {coin_details['symbol']}
+    🔶 Claim {coin_details['airdrop_amt']} {coin_details["symbol"]} Bonus
+    """
 
-balance = f"""
-Balance - {coin_details['airdrop_amt']} {coin_details['symbol']}
+def balance(link):
+    f"""
+    Balance - {coin_details['airdrop_amt']} {coin_details['symbol']}
 
-Referral Link - {coin_details["referral_link"]}
+    Referral Link - {link}
 
-Referral Count - {coin_details["referral_count"]}
-"""
+    Referral Count - {coin_details["referral_count"]}
+    """
 
 def withdraw(amount_of_referrals):
     if amount_of_referrals < coin_details["referral_count"]:
         return f"""
-        You need [amount of referrals needed to withdraw] to complete your withdrawal, please make sure to complete your referral count to [total amount of referrals needed to withdraw] inorder to participate on the max withdrawal on [date of airdrop payout]
+        You currently have <strong>{coin_details['referral_count']} referrals</strong> to complete your withdrawal, please make sure to complete your referral count to {coin_details['max_referral']} or more inorder to participate on the max withdrawal on {coin_details["airdrop_date"]}
         """
     else:
         return f"""You have successfully reached your referral quota and payment will be disbursed soon to your provided wallet address, please make sure the wallet address you submitted earlier is correct. Thank you.
         """
 
-invite_and_earn = f"""
-Your referral details are below:
+def invite_and_earn(link):
+    f"""
+    Your referral details are below:
 
-Referral Link - {coin_details["referral_link"]}
+    Referral Link - {link}
 
-Referral Count - {coin_details["referral_count"]}
-"""
+    Referral Count - {coin_details["referral_count"]}
+    """
+
