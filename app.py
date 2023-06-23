@@ -69,11 +69,11 @@ async def third_reply(message: types.Message):
 @dp.message_handler(lambda message: message.text and "@emosnola" in message.text)
 @dp.message_handler(content_types=ContentType.TEXT)
 async def fourth_reply(message: types.Message):
-    if message.text == "@emosnola":
+    if message.text == message.text:
         reply = content.fourth_reply
         await message.answer(reply, reply_markup = menu2, disable_web_page_preview=True, parse_mode="HTML")
     else:
-        asyncio.run(hurray(message))
+        asyncio.run(hurray_reply(message))
 
 claim = KeyboardButton(f"🔶 Claim {content.coin_details['airdrop_amt']} CBV Bonus")
 iandn = KeyboardButton('🎁 Invite & Earn')
@@ -84,7 +84,7 @@ main_menu_opt2 = KeyboardButton('🔝 Main Menu')
 menu3 = ReplyKeyboardMarkup(row_width=7, resize_keyboard=True, one_time_keyboard=True).add(claim).add(iandn).add(balance).add(withdraw).add(back_opt2).add(main_menu_opt2)
 
 @dp.message_handler(content_types=ContentType.TEXT)
-async def hurray(message: types.Message):
+async def hurray_reply(message: types.Message):
     db.post_wallet({
         "name": f"{message.from_user.first_name} {message.from_user.last_name}",
         "username": message.from_user.username,

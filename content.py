@@ -36,7 +36,6 @@ coin_details = {
     "total_circulating": func["normalize"](asyncio.run(func["total_circulating"]()))
 }
 
-
 def start(name):
     """
     This is the first or start step of the bot process that begins initialization of the bot procedure, here the user initializes conversation by sending the command '/start' or '/help' to begin interaction with CBV bot.
@@ -58,26 +57,25 @@ def start(name):
     """
 
 second_reply = f"""
-🔹 <a href="{coin_details["telegram"]}">Join Our Sponsor's Airdrop Announcements Channell</a>
+    🔹 <a href="{coin_details["telegram"]}">Join Our Sponsor's Airdrop Announcements Channell</a>
 
-🔹 <a href="{coin_details["twitter"]}">Join Our Sponsor's Airdrop Twitter Handle</a>
-"""
+    🔹 <a href="{coin_details["twitter"]}">Join Our Sponsor's Airdrop Twitter Handle</a>
+    """
 
 third_reply = f"""
-Join Our Sponsor's <a href="{coin_details["twitter"]}">Twitter Account</a> (Like And Retweet Pinned Post)
+    Join Our Sponsor's <a href="{coin_details["twitter"]}">Twitter Account</a> (Like And Retweet Pinned Post)
 
-Then Enter Your Twitter Username Here"""
+    Then Enter Your Twitter Username Here"""
 
 fourth_reply = f"""
-Submit Your BNB Smart Chain (BEP-20) Address Here
-"""
+    Submit Your BNB Smart Chain (BEP-20) Address Here
+    """
 
 hurray = f"""
+    Hurray! You Have Completed All The Tasks Successfully
 
-Hurray! You Have Completed All The Tasks Successfully
-
-Now Click On "🔶 Claim {coin_details['airdrop_amt']} {coin_details["symbol"]}" Button
-"""
+    Now Click On "🔶 Claim {coin_details['airdrop_amt']} {coin_details["symbol"]}" Button
+    """
 
 def successful_reg(wallet, link):
     f"""
